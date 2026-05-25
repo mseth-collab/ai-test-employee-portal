@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Portal · BestFrAIend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/portal.css">
+</head>
+<body class="portal">
+  <div id="file-warning" class="file-warning" hidden>
+    Open this app through the server — not as a file. Run <code>python -m bestfraiend</code> then visit <code>http://127.0.0.1:8003</code>
+  </div>
+
+  <header class="portal-header">
+    <div class="portal-brand">
+      <div class="portal-brand-mark">BF</div>
+      <div class="portal-brand-text">
+        <strong>Employee Portal</strong>
+        <span>Powered by BestFrAIend</span>
+      </div>
+    </div>
+    <div class="header-search">
+      <input type="text" id="header-search" placeholder="Search policies, events, jobs…" autocomplete="off">
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header" id="btn-ask-pto">Ask: PTO</button>
+      <button type="button" class="btn-header" id="btn-open-events">Events</button>
+      <button type="button" class="btn-header primary" id="btn-open-jobs">Internal jobs</button>
+      <button type="button" class="btn-header" id="btn-notifications" title="Notifications">🔔</button>
+      <div class="avatar" title="You">YR</div>
+    </div>
+  </header>
+
+  <div class="portal-body">
+    <nav class="portal-nav">
+      <div class="nav-label">Main</div>
+      <button type="button" class="nav-btn active" data-view="chat"><span class="icon">💬</span> Ask BestFrAIend</button>
+      <button type="button" class="nav-btn" data-view="onboarding"><span class="icon">🚀</span> Onboarding</button>
+      <button type="button" class="nav-btn" data-view="tax"><span class="icon">📋</span> Tax &amp; Payroll</button>
+      <button type="button" class="nav-btn" data-view="benefits"><span class="icon">🏥</span> Benefits</button>
+      <button type="button" class="nav-btn" data-view="events"><span class="icon">📅</span> Events</button>
+      <button type="button" class="nav-btn" data-view="news"><span class="icon">📰</span> News &amp; Tech</button>
+      <button type="button" class="nav-btn" data-view="jobs"><span class="icon">💼</span> Internal jobs</button>
+      <button type="button" class="nav-btn" data-view="faqs"><span class="icon">❓</span> FAQs</button>
+      <button type="button" class="nav-btn" data-view="knowledge"><span class="icon">📚</span> All policies</button>
+      <div class="nav-label">Quick ask</div>
+      <button type="button" class="chip-btn chip-btn-nav" data-q="How many vacation days do I get?">Vacation days</button>
+      <button type="button" class="chip-btn chip-btn-nav" data-q="How do I request time off?">Request leave</button>
+      <button type="button" class="chip-btn chip-btn-nav" data-q="What is the hotel rate limit?">Hotel limit</button>
+      <button type="button" class="chip-btn chip-btn-nav" data-q="Who do I contact for HR?">HR contact</button>
+      <button type="button" class="chip-btn chip-btn-nav" data-q="Where do I find runbooks?">Confluence</button>
+    </nav>
+
+    <main class="portal-main">
+      <!-- Chat -->
+      <section id="view-chat" class="view active">
+        <div class="view-header">
+          <h1>Ask BestFrAIend</h1>
+          <p>HR · Onboarding · Tax · Benefits · Finance · IT · Confluence · Education</p>
+          <div class="chip-row">
+            <button type="button" class="chip-btn" data-q="How many vacation days do I get per year?">🏖 Vacation</button>
+            <button type="button" class="chip-btn" data-q="How do I request time off?">📅 Request leave</button>
+            <button type="button" class="chip-btn" data-q="What is the hotel rate limit?">✈ Travel limits</button>
+            <button type="button" class="chip-btn" data-q="How do I submit an expense report?">💳 Expenses</button>
+            <button type="button" class="chip-btn" data-q="Who do I contact for HR?">📞 HR contact</button>
+            <button type="button" class="chip-btn" data-q="Where do I find runbooks and technical docs?">📖 Confluence</button>
+          </div>
+        </div>
+        <div class="chat-wrap">
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-compose">
+            <input type="text" id="chat-input" placeholder="Type your question…" autocomplete="off">
+            <button type="button" class="btn btn-primary" id="chat-send">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQs -->
+      <section id="view-faqs" class="view">
+        <div class="view-header">
+          <h1>Frequently Asked Questions</h1>
+          <p>Instant answers on vacation, HR, Confluence, travel, and who to contact — click any question.</p>
+        </div>
+        <div class="list-panel" id="faq-panel"></div>
+      </section>
+
+      <!-- Onboarding -->
+      <section id="view-onboarding" class="view">
+        <div class="view-header">
+          <h1>Onboarding</h1>
+          <p>Day 1 checklist, 30-60-90 plan, buddy program, equipment — North America &amp; Europe.</p>
+        </div>
+        <div class="list-panel"><div class="card-grid" id="onboarding-grid"></div></div>
+      </section>
+
+      <!-- Tax -->
+      <section id="view-tax" class="view">
+        <div class="view-header">
+          <h1>Tax &amp; Payroll</h1>
+          <p>US W-4/W-2, Canada T4, UK PAYE, Germany Lohnsteuer, EU mobility, RSU, year-end forms.</p>
+        </div>
+        <div class="list-panel"><div class="card-grid" id="tax-grid"></div></div>
+      </section>
+
+      <!-- Benefits -->
+      <section id="view-benefits" class="view">
+        <div class="view-header">
+          <h1>Benefits</h1>
+          <p>Health enrollment, 401(k), RRSP, UK pension — by region.</p>
+        </div>
+        <div class="list-panel"><div class="card-grid" id="benefits-grid"></div></div>
+      </section>
+
+      <!-- Events -->
+      <section id="view-events" class="view">
+        <div class="view-header">
+          <h1>Events</h1>
+          <p>Ongoing and upcoming — all-hands, hackathons, office hours.</p>
+        </div>
+        <div class="list-panel">
+          <div class="card-grid" id="events-grid"></div>
+        </div>
+      </section>
+
+      <!-- News & Tech -->
+      <section id="view-news" class="view">
+        <div class="view-header">
+          <h1>News &amp; Tech updates</h1>
+          <p>Company announcements, internal tech launches, platform and security news.</p>
+        </div>
+        <div class="list-panel">
+          <h2 class="section-sub">Tech &amp; Engineering</h2>
+          <div class="card-grid" id="tech-news-grid"></div>
+          <h2 class="section-sub">Company &amp; People</h2>
+          <div class="card-grid" id="company-news-grid"></div>
+        </div>
+      </section>
+
+      <!-- Jobs -->
+      <section id="view-jobs" class="view">
+        <div class="view-header">
+          <h1>Internal jobs</h1>
+          <p>Grow your career here — internal mobility openings.</p>
+        </div>
+        <div class="list-panel">
+          <div class="card-grid" id="jobs-grid"></div>
+        </div>
+      </section>
+
+      <!-- Knowledge -->
+      <section id="view-knowledge" class="view">
+        <div class="view-header">
+          <h1>Knowledge base</h1>
+          <p>Policy and wiki sources BestFrAIend searches for you.</p>
+        </div>
+        <div class="list-panel">
+          <div class="card-grid" id="knowledge-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="portal-widgets">
+      <div class="widget">
+        <div class="widget-title">🤖 AI developments</div>
+        <div id="widget-ai-news"></div>
+      </div>
+      <div class="widget">
+        <div class="widget-title">🔴 Live streams</div>
+        <div id="widget-streams"></div>
+      </div>
+      <div class="widget">
+        <div class="widget-title">📅 Ongoing events</div>
+        <div id="widget-ongoing"></div>
+      </div>
+      <div class="widget">
+        <div class="widget-title">⚙️ Tech news</div>
+        <div id="widget-tech"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal" role="dialog">
+      <div class="modal-head">
+        <h2 id="modal-title">Details</h2>
+        <button type="button" class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-foot" id="modal-foot"></div>
+    </div>
+  </div>
+
+  <div id="toast-wrap" class="toast-wrap"></div>
+
+  <script src="/static/js/portal.js"></script>
+</body>
+</html>

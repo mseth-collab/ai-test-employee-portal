@@ -1,0 +1,46 @@
+@startuml
+participant User
+participant AccountsController
+participant AccountService
+participant AccountRepository
+participant "SQL Database" as SQLDatabase
+participant PricingApiClient
+
+User -> AccountsController: GET /api/accounts?page=1&pageSize=20
+AccountsController -> AccountService: GetAccountsAsync(page, pageSize)
+
+note over AccountService: Validate parameters\nBuild LINQ query\nApply DTO projection
+
+AccountService -> AccountRepository: QueryAccountsAsync(page, pageSize)
+AccountRepository -> SQLDatabase: SELECT COUNT(*) FROM Accounts
+SQLDatabase --> AccountRepository: totalRows
+AccountRepository -> SQLDatabase: SELECT * FROM Accounts ORDER BY Id OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY
+SQLDatabase --> AccountRepository: List<Account> (20 accounts)
+AccountRepository --> AccountService: (Accounts, TotalCount)
+
+note over AccountService: N+1 Loading of Transactions
+
+loop [For each Account in result (N+1)]
+    AccountService -> AccountRepository: GetTransactionsByAccountIdAsync(id)
+    AccountRepository -> SQLDatabase: SELECT * FROM Transactions WHERE AccountId = @id
+    SQLDatabase --> AccountRepository: List<Transaction>
+    AccountRepository --> AccountService: List<Transaction>
+end
+
+note over AccountService: Async enrichment per account
+
+loop [For each Account]
+    par
+        AccountService -> PricingApiClient: GetPricingAsync(account.Id)
+        PricingApiClient --> AccountService: PricingDto
+    and
+        AccountService -> PricingApiClient: GetRiskAsync(account.Id)
+        PricingApiClient --> AccountService: RiskDto
+    end
+    note over AccountService: Map to EnrichedAccountDto(account, pricing, risk)
+end
+
+AccountService --> AccountsController: AccountsPageDto (paged response)
+AccountsController --> User: 200 OK (JSON)
+@enduml
+
