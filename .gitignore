@@ -7,3 +7,18 @@ __pycache__/
 dist/
 build/
 .DS_Store
+_verify.py
+_test_*.py
+
+# Other projects (kept locally, not in this repo)
+benchmark_framework/
+healthcare_clinic_bot/
+org_ai_platform/
+software_org_ai_platform/
+accounts_diagram*
+SEQUENCE_DIAGRAM_AGENT_SUMMARY.md
+analyze_puml_diagram.py
+config.py
+main.py
+sql_dw_doctor.py
+sql_tools.py
