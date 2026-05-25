@@ -1,5 +1,7 @@
 """
-Hardcoded FAQs for BestFrAIend POC.
+from __future__ import annotations
+
+# Hardcoded FAQs for BestFrAIend POC.
 Categories: vacation, hr, confluence, travel, contacts.
 Matched before full-text search so answers are instant and deterministic.
 """

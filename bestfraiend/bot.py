@@ -1,5 +1,7 @@
 """
-BestFrAIend — employee self-service assistant.
+from __future__ import annotations
+
+# BestFrAIend — employee self-service assistant.
 Searches HR, Confluence, Finance, Expense, and Education policies without human escalation.
 """
 

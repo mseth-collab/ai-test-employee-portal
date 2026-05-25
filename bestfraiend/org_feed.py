@@ -2,6 +2,7 @@
 Synthetic org feed: events, news, streaming, internal jobs.
 Demo data for BestFrAIend side panel and bot answers.
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 

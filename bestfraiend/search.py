@@ -2,6 +2,7 @@
 Search across synthetic employee knowledge sources.
 Simple keyword scoring — no external deps; replace with vector search in production.
 """
+from __future__ import annotations
 
 import re
 from dataclasses import dataclass

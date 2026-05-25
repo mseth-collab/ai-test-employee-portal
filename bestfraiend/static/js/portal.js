@@ -357,34 +357,47 @@
     ]);
   }
 
+  async function fetchJson(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+
   async function loadData() {
+    // Retry health check up to 3 times (handles Render cold-start delay)
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const h = await fetchJson('/health');
+        if (h && h.status === 'ok') { serverOk = true; break; }
+      } catch { /* retry */ }
+      if (attempt < 2) await new Promise(res => setTimeout(res, 1500));
+    }
+
+    // Load feed and sources independently — partial failures are fine
     try {
-      const health = await fetch('/health');
-      if (!health.ok) throw new Error('no health');
-      const [feedRes, srcRes] = await Promise.all([fetch(API.feed), fetch(API.sources)]);
-      orgFeed = await feedRes.json();
-      sources = (await srcRes.json()).sources || [];
-      serverOk = true;
+      orgFeed = await fetchJson(API.feed);
     } catch {
-      serverOk = false;
-      orgFeed = { ongoing_events: [], upcoming_events: [], news: [], streams: [], internal_jobs: [] };
+      orgFeed = { ongoing_events: [], upcoming_events: [], news: [], company_news: [], tech_news: [], streams: [], internal_jobs: [], ai_news: [] };
+    }
+    try {
+      sources = (await fetchJson(API.sources)).sources || [];
+    } catch {
       sources = [];
     }
+
     renderWidgets(orgFeed);
     renderEventsPage(orgFeed);
     renderJobsPage(orgFeed);
     renderNewsPage(orgFeed);
     renderKnowledgePage(sources);
-    if (serverOk) {
-      await Promise.all([
-        loadPolicySection('onboarding', '#onboarding-grid'),
-        loadPolicySection('tax', '#tax-grid'),
-        loadPolicySection('benefits', '#benefits-grid'),
-        fetch('/api/faqs').then(r => r.json()).then(renderFaqPanel).catch(() => renderFaqPanel(null)),
-      ]);
-    } else {
-      renderFaqPanel(null);
-    }
+
+    // Policy sections and FAQs (only need server for these)
+    await Promise.all([
+      loadPolicySection('onboarding', '#onboarding-grid'),
+      loadPolicySection('tax', '#tax-grid'),
+      loadPolicySection('benefits', '#benefits-grid'),
+      fetchJson('/api/faqs').then(renderFaqPanel).catch(() => renderFaqPanel(null)),
+    ]);
   }
 
   function bindUi() {
